@@ -91,7 +91,7 @@ print(p_value)
 print("\nQuestion 1.2\n")
 # pd.options.display.max_columns = 10
 # print(pg.corr(x=homeData['GrLivArea'], y=homeData['SalePrice']))
-print(b1 - 2 * std_err, b1 + 2 * std_err)
+print(slope - 2 * std_err, slope + 2 * std_err)
 
 print("\nQuestion 1.3\n")
 model = LinearRegression()
@@ -116,10 +116,39 @@ print("\nQuestion 1.6\n")
 print(r_value)
 
 print("\n---------Question 2--------------\n")
-homeData['ExterQual'] = homeData.ExterQual.map({'Ex': 4, 'Fa': 2, 'Gd': 4, 'TA': 1})
-print(homeData['ExterQual'])
+pd.options.display.max_columns = 100
+dummies = pd.get_dummies(homeData.ExterQual, prefix='ExterQual')
+dummies.drop(dummies['ExterQual_TA'])
+homeData = pd.concat([homeData, dummies], axis=1)
+print(homeData.head())
+x1 = homeData['ExterQual_Ex']
+x2 = homeData['ExterQual_Fa']
+x3 = homeData['ExterQual_Gd']
+slope, intercept, r_value, p_value, std_err = stats.linregress(x1, y)
+plt.scatter(x1, y, c='#ef5423', label='Scatter Plot')
+plt.xlabel("ExterQual_Ex")
+plt.ylabel("SalePrice")
+plt.legend()
+plt.show()
 
 print("\nQuestion 2.1\n")
+dataDict = {'ExterQual_Ex': x1, 'ExterQual_Fa': x2, 'ExterQual_Gd': x3}
+tempFrame = pd.DataFrame(dataDict)
+print(pg.linear_regression(tempFrame, y))
+print(slope - 2 * std_err, slope + 2 * std_err)
 
+print("\nQuestion 2.2\n")
 
+model = LinearRegression()
+model.fit(tempFrame, y)
+print(model.coef_)
+
+print("\nQuestion 2.4\n")
+print(model.score(tempFrame, y))
+
+print("\nQuestion 2.6\n")
+dataDict = {'ExterQual_Ex': x1, 'ExterQual_Fa': x2}
+tempFrame = pd.DataFrame(dataDict)
+
+model = LinearRegression()
 
